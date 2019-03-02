@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_ingresar"
+            android:icon="@android:drawable/ic_input_add"
+            android:title="Ingresar Cliente" />
+        <item
+            android:id="@+id/nav_buscar"
+            android:icon="@android:drawable/ic_search_category_default"
+            android:title="Buscar Cliente" />
+        <item
+            android:id="@+id/nav_modificar"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Modificar Cliente" />
+        <item
+            android:id="@+id/nav_desactivar"
+            android:icon="@android:drawable/ic_delete"
+            android:title="Desactivar Cuenta" />
+    </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_deposito"
+            android:icon="@android:drawable/ic_input_add"
+            android:title="Depósito" />
+        <item
+            android:id="@+id/nav_retiro"
+            android:icon="@android:drawable/ic_menu_upload"
+            android:title="Retiro" />
+        <item
+            android:id="@+id/nav_transferencia"
+            android:icon="?android:attr/textSelectHandle"
+            android:title="Transferencia" />
+    </group>
+
+
+</menu>
