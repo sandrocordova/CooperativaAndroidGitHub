@@ -11,7 +11,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.root.cooperativa.R;
+import com.example.root.cooperativa.login.Global;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +44,15 @@ public class frg_transferencia extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private RequestQueue requestQueue;
+
+    private JSONArray jsonArray = new JSONArray();
+
+
+    Global global = new Global();
+
+
+    private String url = "http://"+global.getIp()+":8080/Proyecto/api/cuenta/transferencia";
     private EditText txtCedulaTransferenciaEnvia, txtCedulaTransferenciaRecibe, txtCantidadDepositoTransferencia;
     private Button btnAceptarTransferencia;
 
@@ -74,17 +96,65 @@ public class frg_transferencia extends Fragment {
         View vista = inflater.inflate(R.layout.fragment_frg_transferencia, container, false);
         txtCedulaTransferenciaEnvia = (EditText)vista.findViewById(R.id.txt_tranferencia_cedulaEnvia);
         txtCedulaTransferenciaRecibe = (EditText)vista.findViewById(R.id.txt_transferencia_cedulaRecibe);
+        txtCantidadDepositoTransferencia = (EditText)vista.findViewById(R.id.txt_transferencia_cantidad);
         btnAceptarTransferencia = (Button)vista.findViewById(R.id.btn_transferencia_aceptar);
         btnAceptarTransferencia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Toast.makeText(getContext(), "Acción aún no definida", Toast.LENGTH_SHORT).show();
+                cargarWebService();
             }
         });
+
+        requestQueue = Volley.newRequestQueue(getActivity());
         return vista;
     }
 
+    private void cargarWebService(){
+
+        JSONObject cantidad = new JSONObject();
+        JSONObject envia = new JSONObject();
+        JSONObject recibe = new JSONObject();
+
+        Date date = new Date();
+        try {
+            envia.put("numeroR", txtCedulaTransferenciaEnvia.getText().toString());
+            recibe.put("numeroD", txtCedulaTransferenciaRecibe.getText().toString());
+            cantidad.put("valor",txtCantidadDepositoTransferencia.getText().toString());
+            cantidad.put("descripcion", "El número de cuenta: "
+                    +txtCedulaTransferenciaEnvia.getText().toString()+" realizó una transferencia de $"
+                    +txtCantidadDepositoTransferencia.getText().toString()+" el día "+date+" a la cuenta "+txtCedulaTransferenciaRecibe.getText().toString());
+            cantidad.put("responsable", ""+global.getUsuario());
+
+            jsonArray.put(envia);
+            jsonArray.put(recibe);
+            jsonArray.put(cantidad);
+            //Toast.makeText(getContext(), "Respuesta: "+ jsonArray.toString(), Toast.LENGTH_SHORT).show();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.POST, url, jsonArray,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Toast.makeText(getContext(), "Transferencia realizada", Toast.LENGTH_SHORT).show();
+                        //              serverResp.setText("String Response : "+ response.toString());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Transferencia realizada", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "ERROR: "+ error.toString(), Toast.LENGTH_SHORT).show();
+                //    serverResp.setText("Error getting response");
+            }
+        });
+        //jsonObjectRequest.setTag(REQ_TAG);
+        requestQueue.add(jsonObjectRequest);
+        txtCantidadDepositoTransferencia.setText("");
+        txtCedulaTransferenciaRecibe.setText("");
+        txtCedulaTransferenciaEnvia.setText("");
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

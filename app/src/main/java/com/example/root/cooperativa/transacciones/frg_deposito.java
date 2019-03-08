@@ -11,7 +11,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.root.cooperativa.R;
+import com.example.root.cooperativa.login.Global;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
 
 
 /**
@@ -35,6 +48,12 @@ public class frg_deposito extends Fragment {
     private EditText txtCedulaDeposito, txtCantidadDeposito;
     private Button btnAceptarDeposito;
     private OnFragmentInteractionListener mListener;
+
+    Global global = new Global();
+
+    private String url = "http://"+global.getIp()+":8080/Proyecto/api/cuenta/deposito";
+    private RequestQueue requestQueue;
+    private JSONArray jsonArray = new JSONArray();
 
     public frg_deposito() {
         // Required empty public constructor
@@ -78,9 +97,14 @@ public class frg_deposito extends Fragment {
         btnAceptarDeposito.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Acción aún no definida", Toast.LENGTH_SHORT).show();
+                cargarWebService();
+                txtCantidadDeposito.setText("");
+                txtCantidadDeposito.setText("");
+                Toast.makeText(getContext(), "Depósito realizado con éxito", Toast.LENGTH_SHORT).show();
             }
         });
+
+        requestQueue = Volley.newRequestQueue(getActivity());
         return vista;
     }
 
@@ -89,6 +113,43 @@ public class frg_deposito extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+    private void cargarWebService(){
+
+        JSONObject cantidad = new JSONObject();
+        JSONObject cuenta = new JSONObject();
+
+        Date date = new Date();
+        try {
+            cuenta.put("numero", txtCedulaDeposito.getText().toString());
+            cantidad.put("valor",txtCantidadDeposito.getText().toString());
+            cantidad.put("descripcion", "Depósito de $"
+                    +txtCantidadDeposito.getText().toString()+" el día "+date);
+            cantidad.put("responsable", ""+global.getUsuario());
+
+            jsonArray.put(cuenta);
+            jsonArray.put(cantidad);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.POST, url, jsonArray,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        //              serverResp.setText("String Response : "+ response.toString());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Toast.makeText(getContext(), "ERROR: "+ error.toString(), Toast.LENGTH_SHORT).show();
+                //    serverResp.setText("Error getting response");
+            }
+        });
+        //jsonObjectRequest.setTag(REQ_TAG);
+        requestQueue.add(jsonObjectRequest);
     }
 
     @Override

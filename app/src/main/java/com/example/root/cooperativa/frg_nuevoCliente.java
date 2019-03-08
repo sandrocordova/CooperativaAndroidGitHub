@@ -21,6 +21,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.root.cooperativa.login.Global;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,6 +66,9 @@ public class frg_nuevoCliente extends Fragment implements View.OnClickListener {
 
 
     private StringRequest stringRequest;
+
+
+    Global global = new Global();
 
 
     private RequestQueue requestQueue;
@@ -114,9 +118,6 @@ public class frg_nuevoCliente extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_frg_nuevo_cliente, container, false);
          cedula = (EditText)vista.findViewById(R.id.txt_ingresar_cedula);
-
-         mostrarPost = (EditText) vista.findViewById(R.id.txt_mostrar_post);
-
          nombres = (EditText)vista.findViewById(R.id.txt_ingresar_nombres);
          apellidos = (EditText)vista.findViewById(R.id.txt_ingresar_apellidos);
          genero = (EditText)vista.findViewById(R.id.txt_ingresar_genero);
@@ -124,7 +125,7 @@ public class frg_nuevoCliente extends Fragment implements View.OnClickListener {
          fechaNacimiento = (EditText)vista.findViewById(R.id.txt_ingresar_fechaNacimiento);
          correo = (EditText)vista.findViewById(R.id.txt_ingresar_correo);
          telefono = (EditText)vista.findViewById(R.id.txt_ingresar_telefono);
-         celular = (EditText)vista.findViewById(R.id.txt_ingresar_cedula);
+         celular = (EditText)vista.findViewById(R.id.txt_ingresar_celuar);
          direccion = (EditText)vista.findViewById(R.id.txt_ingresar_direccion);
          tipoCuenta = (EditText)vista.findViewById(R.id.txt_ingresar_tipoCuenta);
          guardar = (Button)vista.findViewById(R.id.btn_ingresar_guardar);
@@ -160,7 +161,7 @@ public class frg_nuevoCliente extends Fragment implements View.OnClickListener {
 
     private void cargarWebService(){
 
-        String url = "http://10.30.4.189:8080/Proyecto/api/cuenta";
+        String url = "http://"+global.getIp()+":8080/Proyecto/api/cuenta/guardarCliente";
         JSONObject json = new JSONObject();
         JSONObject json2 = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -215,7 +216,6 @@ public class frg_nuevoCliente extends Fragment implements View.OnClickListener {
 
             jsonArray.put(json2);
             jsonArray.put(json);
-            mostrarPost.setText(jsonArray.toString());
             //Toast.makeText(getContext(), "Respuesta: "+ json.toString(), Toast.LENGTH_SHORT).show();
 
         } catch (JSONException e) {
@@ -227,18 +227,32 @@ public class frg_nuevoCliente extends Fragment implements View.OnClickListener {
                     @Override
                     public void onResponse(JSONArray response) {
 
-                        Toast.makeText(getContext(), "Respuesta: "+ response.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Cliente Guardado", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "CORRECTO: "+ response.toString(), Toast.LENGTH_SHORT).show();
                         //              serverResp.setText("String Response : "+ response.toString());
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "ERROR: "+ error.toString(), Toast.LENGTH_SHORT).show();
+                      // Toast.makeText(getContext(), ""+ error.toString(), Toast.LENGTH_SHORT).show();
                 //    serverResp.setText("Error getting response");
             }
         });
         //jsonObjectRequest.setTag(REQ_TAG);
         requestQueue.add(jsonObjectRequest);
+
+        cedula.setText("");
+        nombres.setText("");
+        apellidos.setText("");
+        estadoCivil.setText("");
+        fechaNacimiento.setText("");
+        telefono.setText("");
+        celular.setText("");
+        direccion.setText("");
+        tipoCuenta.setText("");
+        genero.setText("");
+        correo.setText("");
+
     }
 
     @Override
@@ -247,7 +261,10 @@ public class frg_nuevoCliente extends Fragment implements View.OnClickListener {
         switch (v.getId()){
             case R.id.btn_ingresar_guardar:
                 cargarWebService();
+
 /*
+
+
                 String url = "http://10.30.3.130:8080/ProyectoCooperativa/ServicioRest/cuenta";
                 stringRequest = new StringRequest(Request.Method.POST, url,
                         new Response.Listener<String>(){

@@ -19,7 +19,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.root.cooperativa.login.Global;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,7 +56,13 @@ public class frg_desactivar_cliente extends Fragment {
     TextView txtCedulaDesactivar, txtNombreDesactivar;
     Button btnDesactivarAceptar;
 
+
+    Global global = new Global();
+
+
+
     ServicioWeb hiloConexion;
+    ServicioWeb2 hiloConexion2;
 
     private RequestQueue requestQueue;
     private OnFragmentInteractionListener mListener;
@@ -91,13 +99,105 @@ public class frg_desactivar_cliente extends Fragment {
         }
     }
 
-    private void cargarWebService(){
+    public class ServicioWeb extends AsyncTask<String,Void, String> {
 
-        String url = "http://10.30.4.189:8080/Proyecto/api/cuenta/desactivar";
+        @Override
+        protected String doInBackground(String... strings) {
+            String cadena = strings[0];
+            String devuelve = "No devuelve nada";
+            URL url;
+            if (strings[1]=="1"){
+                try {
+                    url = new URL(cadena);
+                    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                    int codigoConnection = connection.getResponseCode();
+                    StringBuilder result = new StringBuilder();
+                    if (codigoConnection==HttpURLConnection.HTTP_OK){
+                        InputStream in = new BufferedInputStream(connection.getInputStream());
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        devuelve = br.readLine();
+                        return devuelve;
+                    }
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return devuelve;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            try {
+                obtenerObjeros(s);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            super.onPostExecute(s);
+
+        }
+    }
+    public class ServicioWeb2 extends AsyncTask<String,Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String cadena = strings[0];
+            String devuelve = "No devuelve nada";
+            URL url;
+            if (strings[1]=="1"){
+                try {
+                    url = new URL(cadena);
+                    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                    int codigoConnection = connection.getResponseCode();
+                    StringBuilder result = new StringBuilder();
+                    if (codigoConnection==HttpURLConnection.HTTP_OK){
+                        InputStream in = new BufferedInputStream(connection.getInputStream());
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        devuelve = br.readLine();
+                        return devuelve;
+                    }
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return devuelve;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Toast.makeText(getContext(), "Cliente desactivado", Toast.LENGTH_SHORT).show();
+            txtNombreDesactivar.setText("");
+            txtCedulaDesactivar.setText("");
+            super.onPostExecute(s);
+
+        }
+    }
+    private void obtenerObjeros(String str) throws JSONException {
+
+        JSONObject jsonObject = new JSONObject(str);
+        txtCedulaDesactivar.setText(jsonObject.getString("cedula"));
+        txtNombreDesactivar.setText(jsonObject.getString("nombres")+" "+jsonObject.getString("apellidos"));
+
+    }
+
+    private void cargarWebService(){
+        String url = "http://"+global.getIp()+":8080/Proyecto/api/cuenta/cambiarEstado?cedula="
+                +txtCedulaDesactivar.getText().toString()+"&estado=false";
+        hiloConexion2 = new ServicioWeb2();
+        hiloConexion2.execute(url, "1");
+        /*
+
+        String url = "http://192.168.1.8:8080/Proyecto/api/cuenta/cambiarEstado";
         JSONObject json = new JSONObject();
         try {
             json.put("cedula",txtCedulaDesactivar.getText().toString());
-            json.put("orden",0);
+            json.put("orden",false);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -108,7 +208,7 @@ public class frg_desactivar_cliente extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        Toast.makeText(getContext(), "Respuesta: "+ response.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "El cliente se ha dado de baja", Toast.LENGTH_SHORT).show();
                         //              serverResp.setText("String Response : "+ response.toString());
                     }
                 }, new Response.ErrorListener() {
@@ -119,6 +219,7 @@ public class frg_desactivar_cliente extends Fragment {
         });
         //jsonObjectRequest.setTag(REQ_TAG);
         requestQueue.add(jsonObjectRequest);
+        */
     }
 
     @Override
@@ -132,7 +233,7 @@ public class frg_desactivar_cliente extends Fragment {
         btnDesactivarAceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                cargarWebService();
             }
         });
 
@@ -149,10 +250,10 @@ public class frg_desactivar_cliente extends Fragment {
                 if (cajaCedula.length()<=0){
                     Toast.makeText(getContext(), "Ingrese cédula", Toast.LENGTH_SHORT).show();
                 }else {
-
-                    String url = "http://10.20.2.58:8080/Proyecto/api/cuenta/getCedula?cedula=" + cajaCedula.getText().toString();
+                    String url = "http://"+global.getIp()+":8080/Proyecto/api/cuenta/buscarCedulaCliente?cedula="+cajaCedula.getText().toString();
                     hiloConexion = new ServicioWeb();
                     hiloConexion.execute(url, "1");
+                    dlgBuscar.hide();
                 }
             }
         });
@@ -198,57 +299,6 @@ public class frg_desactivar_cliente extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    public class ServicioWeb extends AsyncTask<String,Void, String> {
 
-        @Override
-        protected String doInBackground(String... strings) {
-            String cadena = strings[0];
-            String devuelve = "No devuelve nada";
-            URL url;
-            if (strings[1]=="1"){
-                try {
-                    url = new URL(cadena);
-                    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                    int codigoConnection = connection.getResponseCode();
-                    StringBuilder result = new StringBuilder();
-                    if (codigoConnection==HttpURLConnection.HTTP_OK){
-                        InputStream in = new BufferedInputStream(connection.getInputStream());
-                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                        devuelve = br.readLine();
-                        return devuelve;
-                    }
 
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return devuelve;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            try {
-                obtenerObjeros(s);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            super.onPostExecute(s);
-
-        }
-    }
-
-    private void obtenerObjeros(String entrada) throws JSONException {
-        obtenerParadas(entrada);
-    }
-    private void obtenerParadas(String str) throws JSONException {
-
-        Toast.makeText(getContext(), ""+str, Toast.LENGTH_SHORT).show();
-        JSONObject jsonObject = new JSONObject(str);
-        txtCedulaDesactivar.setText(jsonObject.getString("cedula"));
-        txtNombreDesactivar.setText(jsonObject.getString("nombres")+" "+jsonObject.getString("apellidos"));
-
-    }
 }

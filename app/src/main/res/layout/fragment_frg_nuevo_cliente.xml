@@ -16,13 +16,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/txt_mostrar_post"
-                android:layout_width="match_parent"
-                android:layout_height="202dp"
-                android:ems="10"
-                android:inputType="textPersonName" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +35,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="11111" />
+                    android:text="" />
 
             </LinearLayout>
 
@@ -65,7 +58,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="ejemplo" />
+                    android:text="Maria" />
             </LinearLayout>
 
             <LinearLayout
@@ -87,7 +80,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="Ejemplo Apllidos" />
+                    android:text="Cuenca" />
             </LinearLayout>
 
             <LinearLayout
@@ -109,7 +102,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="M" />
+                    android:text="Masculino" />
             </LinearLayout>
 
             <LinearLayout
@@ -122,7 +115,7 @@
                     android:layout_width="124dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Estad Civil" />
+                    android:text="Estado Civil" />
 
                 <EditText
                     android:id="@+id/txt_ingresar_EstadoCivil"
@@ -131,7 +124,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="Solter" />
+                    android:text="Soltera" />
             </LinearLayout>
 
             <LinearLayout
@@ -153,7 +146,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="199-02-02" />
+                    android:text="189-23-02" />
             </LinearLayout>
 
             <LinearLayout
@@ -175,7 +168,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="Ejemplo@" />
+                    android:text="camilacueva@unl.edu.ed" />
             </LinearLayout>
 
             <LinearLayout
@@ -197,7 +190,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="12345" />
+                    android:text="3026172" />
             </LinearLayout>
 
             <LinearLayout
@@ -219,7 +212,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="12345" />
+                    android:text="098912312" />
             </LinearLayout>
 
             <LinearLayout
@@ -241,7 +234,7 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="Loja" />
+                    android:text="Loja, el valle, calle 3-3-30" />
 
             </LinearLayout>
 

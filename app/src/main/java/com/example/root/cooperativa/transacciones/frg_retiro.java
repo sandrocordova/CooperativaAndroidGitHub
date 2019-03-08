@@ -11,7 +11,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.root.cooperativa.R;
+import com.example.root.cooperativa.login.Global;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,6 +48,14 @@ public class frg_retiro extends Fragment {
     private Button btnAceptarRetiro;
 
     private OnFragmentInteractionListener mListener;
+
+
+    Global global = new Global();
+
+
+    private String url = "http://"+global.getIp()+":8080/Proyecto/api/cuenta/retiro";
+    private RequestQueue requestQueue;
+    private JSONArray jsonArray = new JSONArray();
 
     public frg_retiro() {
         // Required empty public constructor
@@ -78,13 +99,53 @@ public class frg_retiro extends Fragment {
         btnAceptarRetiro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Acción aún no definida", Toast.LENGTH_SHORT).show();
-
+                cargarWebService();
             }
         });
+
+        requestQueue = Volley.newRequestQueue(getActivity());
         return vista;
     }
 
+    private void cargarWebService(){
+
+        JSONObject cantidad = new JSONObject();
+        JSONObject cuenta = new JSONObject();
+
+        Date date = new Date();
+        try {
+            cuenta.put("numero", txtCedulaRetiro.getText().toString());
+            cantidad.put("valor",txtCantidadRetiro.getText().toString());
+            cantidad.put("descripcion", "Retiro de $"
+                    +txtCantidadRetiro.getText().toString()+" el día "+date);
+            cantidad.put("responsable", ""+global.getUsuario());
+
+            jsonArray.put(cuenta);
+            jsonArray.put(cantidad);
+            Toast.makeText(getContext(), "Respuesta: "+ jsonArray.toString(), Toast.LENGTH_SHORT).show();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.POST, url, jsonArray,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        Toast.makeText(getContext(), response+"", Toast.LENGTH_SHORT).show();
+                        //              serverResp.setText("String Response : "+ response.toString());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //    serverResp.setText("Error getting response");
+            }
+        });
+        //jsonObjectRequest.setTag(REQ_TAG);
+        requestQueue.add(jsonObjectRequest);
+        txtCantidadRetiro.setText("");
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

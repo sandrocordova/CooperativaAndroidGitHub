@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.root.cooperativa.login.Global;
 
 
 import org.json.JSONArray;
@@ -66,6 +67,9 @@ public class frg_modificar extends Fragment {
     Button btnModificar;
     String contenido="";
 
+
+
+    Global global = new Global();
 
     ServicioWeb hiloConexion;
     private RequestQueue requestQueue;
@@ -113,11 +117,9 @@ public class frg_modificar extends Fragment {
                 if (cajaCedula.length()<=0){
                     Toast.makeText(getContext(), "Ingrese cédula", Toast.LENGTH_SHORT).show();
                 }else {
-
-                    String url = "http://10.20.2.58:8080/Proyecto/api/cuenta/getCedula?cedula="+cajaCedula.getText().toString();
+                    String url = "http://"+global.getIp()+":8080/Proyecto/api/cuenta/buscarCedulaCliente?cedula="+cajaCedula.getText().toString();
                     hiloConexion = new ServicioWeb();
                     hiloConexion.execute(url, "1");
-
                     dlgBuscar.hide();
                 }
             }
@@ -133,6 +135,7 @@ public class frg_modificar extends Fragment {
         View vista = inflater.inflate(R.layout.fragment_frg_modificar, container, false);
 
         requestQueue = Volley.newRequestQueue(getActivity());
+
         txtcedula = (EditText)vista.findViewById(R.id.txt_modificar_cedula);
         txtnombres = (EditText)vista.findViewById(R.id.txt_modificar_nombres);
         txtapellidos = (EditText)vista.findViewById(R.id.txt_modificar_apellidos);
@@ -143,6 +146,7 @@ public class frg_modificar extends Fragment {
         txtTelefono = (EditText)vista.findViewById(R.id.txt_modificar_telefono);
         txtCelular = (EditText)vista.findViewById(R.id.txt_modificar_celuar);
         txtDireccion = (EditText)vista.findViewById(R.id.txt_modificar_direccion);
+
 
         txtcedula.setFocusable(false);
         txtgenero.setFocusable(false);
@@ -167,7 +171,7 @@ public class frg_modificar extends Fragment {
 
     private void cargarWebService(){
 
-        String url = "http://10.30.4.189:8080/Proyecto/api/cuenta/updateClient";
+        String url = "http://"+global.getIp()+":8080/Proyecto/api/cuenta/modificarCliente";
         JSONObject json = new JSONObject();
         try {
             json.put("cedula",txtcedula.getText().toString());
@@ -181,28 +185,37 @@ public class frg_modificar extends Fragment {
             json.put("celular",txtCelular.getText().toString());
             json.put("direccion",txtDireccion.getText().toString());
 
-            Toast.makeText(getContext(), "Respuesta: "+ json.toString(), Toast.LENGTH_SHORT).show();
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, json,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        Toast.makeText(getContext(), "Respuesta: "+ response.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Cliente modificado", Toast.LENGTH_SHORT).show();
                         //              serverResp.setText("String Response : "+ response.toString());
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Cliente modificado", Toast.LENGTH_SHORT).show();
                 //    serverResp.setText("Error getting response");
             }
         });
         //jsonObjectRequest.setTag(REQ_TAG);
         requestQueue.add(jsonObjectRequest);
+        txtcedula.setText("");
+        txtnombres.setText("");
+        txtapellidos.setText("");
+        txtgenero.setText("");
+        txtEstadoCivil.setText("");
+        txtFechaNacimiento.setText("");
+        txtCorreo.setText("");
+        txtTelefono.setText("");
+        txtCelular.setText("");
+        txtDireccion.setText("");
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -289,59 +302,7 @@ public class frg_modificar extends Fragment {
     private void obtenerObjeros(String entrada) throws JSONException {
         obtenerParadas(entrada);
     }
-    private void obtenerObjero(String entrada) throws JSONException {
-
-        /*
-        JSONObject jsonBody;
-
-        RequestQueue requestQueue;
-
-
-
-        URL url = "";
-        try {
-            jsonBody = new JSONObject();
-            jsonBody.put("Title", "VolleyApp Android Demo");
-            jsonBody.put("Author", "BNK");
-            jsonBody.put("Date", "2015/08/26");
-            requestBody = jsonBody.toString();
-
-            StringRequest stringRequest = new StringRequest(1, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    textView.setText(response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    textView.setText(error.toString());
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return String.format("application/json; charset=utf-8");
-                }
-
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return requestBody == null ? null : requestBody.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
-                                requestBody, "utf-8");
-                        return null;
-                    }
-                }
-            };
-            MySingleton.getInstance(this).addToRequestQueue(stringRequest);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-*/
-    }
     private void obtenerParadas(String str) throws JSONException {
-
-        Toast.makeText(getContext(), ""+str, Toast.LENGTH_SHORT).show();
         JSONObject jsonObject = new JSONObject(str);
             txtcedula.setText(jsonObject.getString("cedula"));
             txtnombres.setText(jsonObject.getString("nombres"));
@@ -353,7 +314,6 @@ public class frg_modificar extends Fragment {
             txtCelular.setText(jsonObject.getString("celular"));
             txtTelefono.setText(jsonObject.getString("telefono"));
             txtDireccion.setText(jsonObject.getString("direccion"));
-
     }
 
 

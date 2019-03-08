@@ -9,9 +9,13 @@
             android:icon="@android:drawable/ic_input_add"
             android:title="Ingresar Cliente" />
         <item
-            android:id="@+id/nav_buscar"
+            android:id="@+id/nav_buscar_cliente"
             android:icon="@android:drawable/ic_search_category_default"
             android:title="Buscar Cliente" />
+        <item
+            android:id="@+id/nav_buscar"
+            android:icon="@android:drawable/btn_dropdown"
+            android:title="Listar Clientes" />
         <item
             android:id="@+id/nav_modificar"
             android:icon="@drawable/ic_menu_manage"
@@ -34,6 +38,10 @@
             android:id="@+id/nav_transferencia"
             android:icon="?android:attr/textSelectHandle"
             android:title="Transferencia" />
+        <item
+            android:id="@+id/nav_reporte"
+            android:icon="@android:drawable/ic_menu_today"
+            android:title="Generar Reporte" />
     </group>
 
 
